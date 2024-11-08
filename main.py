@@ -74,6 +74,12 @@ def path_join(path_parts: [str]):
     return '/'.join(path_parts)
 
 
+def create_dir_if_none(path_parts: [str]):
+    path = path_join(path_parts)
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+
 # Copy files from src to dst if rmv True, else move
 def move_files(src, dst, rmv):
     files = [f for f in os.listdir(src) if os.path.isfile(os.path.join(src, f))]
@@ -81,34 +87,21 @@ def move_files(src, dst, rmv):
     for file in files:
         year, month = file[:4], file[4:6]
 
-        path = [dst, year]
+        create_dir_if_none([dst, year])
 
-        if not path_exists(path):
-            os.mkdir(path_join(path))
-            print("made ", year)
-
-        path.append(month)
-
-        if not path_exists(path):
-            os.mkdir(path_join(path))
-            print("made ", month)
-
-        path.append(file)
+        create_dir_if_none([dst, year, month])
 
         file_source = path_join([src, file])
-        file_destination = path_join(path)
+        file_destination = path_join([dst, year, month, file])
 
         if not os.path.exists(file_destination):  # either move or copy
             if rmv:
                 os.rename(file_source, file_destination)
-                print("moved")
             else:
                 shutil.copy(file_source, file_destination)
-                print("copied")
 
         elif rmv:  # remove or do nothing
             os.remove(file_source)
-            print("deleted")
 
 
 if __name__ == '__main__':
