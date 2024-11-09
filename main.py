@@ -87,7 +87,7 @@ def done_dialog():
     window = gui.Window(name, layout)
 
     while True:
-        event = window.read()
+        event, values = window.read()
         if event == 'Ok':
             break
 
