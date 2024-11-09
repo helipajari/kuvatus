@@ -66,7 +66,7 @@ def dialog():
                 old_element = new_element
                 old_element.update(background_color=bg)
 
-        if event == gui.WIN_CLOSED or event == 'Peruuta':
+        if event == gui.WIN_CLOSED or event == 'Sulje':
             break
 
         if event == 'Ok':
@@ -84,10 +84,13 @@ def dialog():
 def done_dialog():
     gui.theme(THEME)
 
-    layout = [[gui.Text('Valmis!')], [], [],
-              [gui.Button('Ok')], [], []]
+    ok_btn = gui.Button('Ok', button_color=bg)
 
-    window = gui.Window(name, layout)
+    layout = [[gui.Text('Valmis!')], [], [],
+              [ok_btn], [], []]
+
+    window = gui.Window(name, layout, finalize=True)
+    ok_btn.set_focus()
 
     while True:
         event, values = window.read()
@@ -112,10 +115,11 @@ def validation_error_dialog(src, dst):
         dst_gui = [[gui.Text("- kohdekansion polku")], [], []]
         layout += dst_gui
 
-    ok_btn = [[gui.Button('Ok')], [], []]
-    layout += ok_btn
+    ok_btn = gui.Button('Ok', button_color=bg)
+    layout += [[ok_btn], [], []]
 
-    window = gui.Window(name, layout)
+    window = gui.Window(name, layout, finalize=True)
+    ok_btn.set_focus()
 
     while True:
         event, values = window.read()
