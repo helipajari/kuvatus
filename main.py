@@ -4,18 +4,18 @@ import shutil
 import sys
 import threading
 import time
+
 import PySimpleGUI as gui
 
 name = "Kuvake"
 version = 1.0
 THEME = 'LightBlue'
+bg = 'red'
 
 
-# returns a tuple with parameters
 def dialog():
     gui.theme(THEME)
 
-    # on laptops try D because usually no extra discs
     init_src = os.path.join('D:\\', '')
     if not os.path.exists(init_src):
         init_src = "etsi kansio"
@@ -26,18 +26,36 @@ def dialog():
         init_dst = "etsi kansio"
     dst_btn = gui.FolderBrowse('Muuta', initial_folder=init_dst, key='dst')
 
+    rmv_txt = [gui.Checkbox("Poista siirretyt kuvat lähdekansiosta?")]
+
     ok = gui.Button('Ok', disabled=False)
 
     layout = [[gui.Text('Lähdekansion polku: '), gui.Text(init_src), src_btn],
               [gui.Text('Kohdekansion polku: '), gui.Text(init_dst), dst_btn],
-              [gui.Checkbox("Poista siirretyt kuvat lähdekansiosta?")],
+              rmv_txt,
               [ok, gui.Button('Peruuta')]]
 
     # WINDOW MADE HERE
-    window = gui.Window(name + " " + version.__str__(), layout, scaling=2.0)
+    window = gui.Window(name + " " + version.__str__(), layout, return_keyboard_events=True, scaling=2.5)
+
+    old_element, old_bg = None, None
 
     while True:
         event, values = window.read()
+
+        new_element = window.find_element_with_focus()
+        if new_element != old_element:
+            print("update ", new_element, " - ", old_element)
+
+            old_element = new_element
+
+            # TODO: this doesn't work, needs a tuple to work, but this is a tuple though?
+            if isinstance(old_element, (gui.Checkbox, gui.FolderBrowse)) and old_bg:
+                old_element.update(text_color=old_bg)
+            if isinstance(new_element, type([gui.Checkbox, gui.FolderBrowse])):
+                old_bg = new_element.BackgroundColor
+                old_element = new_element
+                old_element.update(text_color=bg)
 
         if event == gui.WIN_CLOSED or event == 'Peruuta':
             break
@@ -149,5 +167,3 @@ if __name__ == '__main__':
     thread.start()
 
     done_dialog()
-
-
