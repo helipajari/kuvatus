@@ -7,7 +7,7 @@ import time
 
 import PySimpleGUI as gui
 
-name = "Kuvake"
+name = "Kuvatus"
 version = 1.0
 THEME = 'LightBlue'
 bg = 'pink'
@@ -158,13 +158,13 @@ def move_files(src, dst, rmv):
         file_source = path_join([src, file])
         file_destination = path_join([dst, year, month, file])
 
-        if not os.path.exists(file_destination):  # either move or copy
+        if not os.path.exists(file_destination):
             if rmv:
                 os.rename(file_source, file_destination)
             else:
                 shutil.copy(file_source, file_destination)
 
-        elif rmv:  # remove or do nothing
+        elif rmv:
             os.remove(file_source)
 
 

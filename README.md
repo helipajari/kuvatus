@@ -1,11 +1,20 @@
-# KUVAKE - kuvien arkistointityökalu
+# Kuvatus - kuvien arkistointityökalu
 
-Kuvake on ohjelma, jolla voi siirtää kuvat esimerkiksi ulkoiselta muistikortilta haluttuun kansioon.
+Kuvatus on ohjelma, jolla voi siirtää kuvat esimerkiksi ulkoiselta muistikortilta haluttuun kansioon.
 Se luo automaattisesti kansiorakenteen vuosille ja kuukausille.
 
-Kuvake ei poista tai korvaa jo olemassa olevia kansioita tai kuvia kohdekansiosta. 
+Kuvatus ei poista tai korvaa jo olemassa olevia kansioita tai kuvia kohdekansiosta. 
 
-### Esimerkki:
+---
+
+## Sisältö
+- [Käyttöesimerkki](#Käyttöesimerkki:)
+- [Asennusohje](#Asennusohje)
+- [Käyttöohje](#Käyttöohje)
+
+---
+
+### Käyttöesimerkki:
 
 
 ```
@@ -36,16 +45,9 @@ Lähdekansio:
 ```
 **HUOMIO!** 
 
-- Kuvake ei (toistaiseksi) etsi tiedostoja alakansioista, 
+- Kuvatus ei (toistaiseksi) etsi tiedostoja alakansioista, 
 eli siirrettävien tiedostojen on oltava kaikkien samassa kansiossa kuten esim. kameran muistikortilla. 
-- Kuvakkeen toiminta perustuu (toistaiseksi) päivämäärälla alkaviin tiedostonimiin.
-
-
-
-
-## Sisältö
-- [Asennusohje](#asennusohje)
-- [Käyttöohje](#käyttöohje)
+- Kuvatuksen toiminta perustuu (toistaiseksi) päivämäärällä alkaviin tiedostonimiin.
 
 ---
 ## Asennusohje 
@@ -54,20 +56,27 @@ eli siirrettävien tiedostojen on oltava kaikkien samassa kansiossa kuten esim. 
 ---
 
 ## Käyttöohje 
-1. käynnistä Kuvake
-2. tarkista lähde- ja kohdekansioiden sijainti
+1. käynnistä Kuvatus
+2. tarkista lähde- ja kohdekansioiden sijainti, muuta niitä tarvittaessa
    - lähdekansio on oletusarvona tietokoneen D-levy, joka läppäreitä käyttäessä on yleensä muistikortti
    - kohdekansio on oletusarvoisesti käyttäjän oma Kuvat-kansio
-3. valitse, poistetaanko kuvat lähdekansiosta (tekstiä voi klikata hiirellä valinnan muuttamiseksi)
+   2. **HUOM** kansiota etsiessä tai muutettaessa on valittava `Valitse kansio`, muuten muutos ei tule voimaan.
+3. valitse, poistetaanko kuvat lähdekansiosta (tekstiä `Poistetaanko kuvat lähdekansiosta?` voi klikata hiirellä valinnan muuttamiseksi)
 4. paina OK
-5. valmis!
+5. siirto on valmis, kun ruutuun ilmestyy `Valmis!`-ikkuna. 
+6. paina OK.
 
 
 ### Näppäimistökäyttöohje
 
-Kuvaketta voi myös käyttää melkein kokonaan ilman hiirtä. Tällöin Kuvake käynnistetään tavalliseen tapaan 
+Kuvatusta voi myös käyttää melkein kokonaan ilman hiirtä. Tällöin Kuvatus käynnistetään tavalliseen tapaan 
 hiirellä, mutta ohjelmassa voi siirtyä napista toiseen Tab-näppäintä käyttämällä. 
-Nappia painetaan välilyöntiä painamalla. Tämä toimii myös valittaessa, poistetaanko lähdekansion kuvat.
+
+Peruuttaa voi painamalla Shift ja Tab samanaikaisesti. 
+
+Välilyönnin käyttö vastaa hiiren klikkausta. Tämä toimii myös valittaessa, poistetaanko lähdekansion kuvat.
+
+
 
 
 ---
