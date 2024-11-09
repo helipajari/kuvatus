@@ -8,31 +8,33 @@ import PySimpleGUI as gui
 
 name = "Kuvake"
 version = 1.0
+THEME = 'LightBlue'
 
 
-# TODO make UI bigger
-# returns tuple with parameters
+# returns a tuple with parameters
 def dialog():
-    gui.theme('DarkAmber')
+    gui.theme(THEME)
 
     # on laptops try D because usually no extra discs
-    init_mem = os.path.join('D:\\', '')
-    mem = gui.FolderBrowse('Muuta', initial_folder=init_mem, key='mem')
-    mem_t = "etsi kansio"
+    init_src = os.path.join('D:\\', '')
+    if not os.path.exists(init_src):
+        init_src = "etsi kansio"
+    src_btn = gui.FolderBrowse('Muuta', initial_folder=init_src, key='src')
 
-    init_pic = os.path.join(os.environ['USERPROFILE'], 'pictures')
-    pic = gui.FolderBrowse('Muuta', initial_folder=init_pic, key='pic')
-    pic_t = "etsi kansio"
+    init_dst = os.path.join(os.environ['USERPROFILE'], 'kuvat')
+    if not os.path.exists(init_dst):
+        init_dst = "etsi kansio"
+    dst_btn = gui.FolderBrowse('Muuta', initial_folder=init_dst, key='dst')
 
     ok = gui.Button('Ok', disabled=False)
 
-    layout = [[gui.Text('Lähdekansion polku: '), gui.Text(mem_t), mem],
-              [gui.Text('Kohdekansion polku: '), gui.Text(init_pic), pic],
+    layout = [[gui.Text('Lähdekansion polku: '), gui.Text(init_src), src_btn],
+              [gui.Text('Kohdekansion polku: '), gui.Text(init_dst), dst_btn],
               [gui.Checkbox("Poista siirretyt kuvat lähdekansiosta?")],
               [ok, gui.Button('Peruuta')]]
 
     # WINDOW MADE HERE
-    window = gui.Window(name + " " + version.__str__(), layout)
+    window = gui.Window(name + " " + version.__str__(), layout, scaling=2.0)
 
     while True:
         event, values = window.read()
@@ -41,19 +43,50 @@ def dialog():
             break
 
         if event == 'Ok':
-            # TODO disable ok unless mem and pic are not default value?
-            if layout[0][1].get() == mem_t:
-                continue
-            # mem, pic, delete
-            return layout[0][1].get(), layout[1][1].get(), layout[2][0].get()
+            src = layout[0][1].get()
+            dst = layout[1][1].get()
+            rmv = layout[2][0].get()
+
+            if os.path.exists(src) and os.path.exists(dst):
+                return src, dst, rmv
+            else:
+                validation_error_dialog(src, dst)
     window.close()
 
 
 def done_dialog():
-    gui.theme('DarkAmber')
+    gui.theme(THEME)
 
     layout = [[gui.Text('Valmis!')], [], [],
               [gui.Button('Ok')], [], []]
+
+    window = gui.Window(name, layout)
+
+    while True:
+        event, values = window.read()
+        if event == 'Ok':
+            break
+
+    window.close()
+
+
+def validation_error_dialog(src, dst):
+    gui.theme(THEME)
+
+    layout = [[gui.Text('Virhe!')], [], [],
+              [gui.Text('Tarkista seuraavat tiedot:')], [], [],
+              ]
+
+    if not os.path.exists(src):
+        src_gui = [[gui.Text("- lähdekansion polku")], [], []]
+        layout += src_gui
+
+    if not os.path.exists(dst):
+        dst_gui = [[gui.Text("- kohdekansion polku")], [], []]
+        layout += dst_gui
+
+    ok_btn = [[gui.Button('Ok')], [], []]
+    layout += ok_btn
 
     window = gui.Window(name, layout)
 
