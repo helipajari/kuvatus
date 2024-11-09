@@ -10,7 +10,7 @@ import PySimpleGUI as gui
 name = "Kuvake"
 version = 1.0
 THEME = 'LightBlue'
-bg = 'red'
+bg = 'pink'
 
 
 def dialog():
@@ -40,22 +40,28 @@ def dialog():
 
     old_element, old_bg = None, None
 
+    base_btn = gui.Button('')
+    base_chk = gui.Checkbox('')
+
     while True:
         event, values = window.read()
-
         new_element = window.find_element_with_focus()
+
         if new_element != old_element:
-            print("update ", new_element, " - ", old_element)
 
-            old_element = new_element
+            if isinstance(old_element, gui.Button):
+                old_element.update(button_color=base_btn.ButtonColor)
 
-            # TODO: this doesn't work, needs a tuple to work, but this is a tuple though?
-            if isinstance(old_element, (gui.Checkbox, gui.FolderBrowse)) and old_bg:
-                old_element.update(text_color=old_bg)
-            if isinstance(new_element, type([gui.Checkbox, gui.FolderBrowse])):
-                old_bg = new_element.BackgroundColor
+            if isinstance(old_element, gui.Checkbox):
+                old_element.update(background_color=base_chk.BackgroundColor)
+
+            if isinstance(new_element, gui.Button):
                 old_element = new_element
-                old_element.update(text_color=bg)
+                old_element.update(button_color=bg)
+
+            if isinstance(new_element, gui.Checkbox):
+                old_element = new_element
+                old_element.update(background_color=bg)
 
         if event == gui.WIN_CLOSED or event == 'Peruuta':
             break
@@ -81,7 +87,7 @@ def done_dialog():
     window = gui.Window(name, layout)
 
     while True:
-        event, values = window.read()
+        event = window.read()
         if event == 'Ok':
             break
 
