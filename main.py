@@ -5,7 +5,7 @@ import sys
 import threading
 import time
 
-import PySimpleGUI as gui
+import FreeSimpleGUI as gui
 from configparser import ConfigParser
 
 name = "Kuvatus"
@@ -17,6 +17,8 @@ bg = 'pink'
 def read_prefs():
     # validate
     config = ConfigParser()
+
+    # try and catch reading this
     config.read("config.ini")
 
     src = config['FILEPATHS']['source']
