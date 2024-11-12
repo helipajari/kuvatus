@@ -6,6 +6,7 @@ import threading
 import time
 
 import PySimpleGUI as gui
+from configparser import ConfigParser
 
 name = "Kuvatus"
 version = 1.0
@@ -13,17 +14,37 @@ THEME = 'LightBlue'
 bg = 'pink'
 
 
+def read_prefs():
+    # validate
+    config = ConfigParser()
+    config.read("config.ini")
+
+    src = config['FILEPATHS']['source']
+
+    usr = os.environ['USERPROFILE']
+    folder = config['FILEPATHS']['destination']
+
+    if int(config['FILEPATHS']['store_under_user']):
+        dst = os.path.join(usr, folder)
+    else:
+        dst = folder
+
+    rmv = int(config['PREFERENCES']['remove'])
+    return src, dst, rmv
+
+
 def dialog():
     gui.theme(THEME)
 
-    init_src = 'D:\\'
+    init_src, init_dst, init_rmv = read_prefs()
     src_str = 'Muuta'
+
+    # validate this elsewhere
     if not os.path.exists(init_src):
         init_src = "etsi kansio"
         src_str = 'Etsi'
     src_btn = gui.FolderBrowse(src_str, initial_folder=init_src, key='src')
 
-    init_dst = os.path.join(os.environ['USERPROFILE'], 'kuvat')
     dst_str = 'Muuta'
     if not os.path.exists(init_dst):
         init_dst = "etsi kansio"
@@ -31,8 +52,9 @@ def dialog():
 
     dst_btn = gui.FolderBrowse(dst_str, initial_folder=init_dst, key='dst')
 
-    rmv_txt = [gui.Checkbox("Poista siirretyt kuvat lähdekansiosta?")]
+    rmv_txt = [gui.Checkbox("Poista siirretyt kuvat lähdekansiosta?", default=init_rmv)]
 
+    # TODO add ability to save preferences
     layout = [[gui.Text('Lähdekansion polku: '), gui.Text(init_src), src_btn],
               [gui.Text('Kohdekansion polku: '), gui.Text(init_dst), dst_btn],
               rmv_txt,
