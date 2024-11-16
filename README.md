@@ -8,13 +8,17 @@ Kuvatus ei poista tai korvaa jo olemassa olevia kansioita tai kuvia kohdekansios
 ---
 
 ## Sisältö
-- [Käyttöesimerkki](#Käyttöesimerkki:)
+- [Käyttöesimerkki](#Käyttöesimerkki)
 - [Asennusohje](#Asennusohje)
 - [Käyttöohje](#Käyttöohje)
+  - [Näppäimistökäyttöohje](#Näppäimistökäyttöohje)
+- [Asetukset](#Asetukset)
+  - [Kuvatukset perusasetukset](#Kuvatukset perusasetukset) 
+  - [Edistyneet asetukset](#Edistyneet asetukset)
 
 ---
 
-### Käyttöesimerkki:
+### Käyttöesimerkki
 
 
 ```
@@ -57,24 +61,47 @@ eli siirrettävien tiedostojen on oltava kaikkien samassa kansiossa kuten esim. 
 
 ## Käyttöohje 
 1. käynnistä Kuvatus
-2. tarkista lähde- ja kohdekansioiden sijainti, muuta niitä tarvittaessa
-   - lähdekansio on oletusarvona tietokoneen D-levy, joka läppäreitä käyttäessä on yleensä muistikortti
-   - kohdekansio on oletusarvoisesti käyttäjän oma Kuvat-kansio
+2. tarkista lähde- ja kohdekansioiden sijainti, etsi tai muuta niitä tarvittaessa
+   - lähdekansio on oletusarvona tietokoneen `D`-levy, joka läppäreitä käyttäessä on yleensä muistikortti
+   - kohdekansio on oletusarvoisesti käyttäjän oma `Kuvat`-kansio
+     - katso [Asetukset](#Asetukset) näiden muokkaamiseksi
    2. **HUOM** kansiota etsiessä tai muutettaessa on valittava `Valitse kansio`, muuten muutos ei tule voimaan.
 3. valitse, poistetaanko kuvat lähdekansiosta (tekstiä `Poistetaanko kuvat lähdekansiosta?` voi klikata hiirellä valinnan muuttamiseksi)
-4. paina OK
+4. paina `OK`
 5. siirto on valmis, kun ruutuun ilmestyy `Valmis!`-ikkuna. 
-6. paina OK.
-
+6. paina `OK`.
 
 ### Näppäimistökäyttöohje
 
-Kuvatusta voi myös käyttää melkein kokonaan ilman hiirtä. Tällöin Kuvatus käynnistetään tavalliseen tapaan 
-hiirellä, mutta ohjelmassa voi siirtyä napista toiseen Tab-näppäintä käyttämällä. 
+Kuvatusta voi käyttää melkein kokonaan ilman hiirtä. Tällöin Kuvatus käynnistetään tavalliseen tapaan 
+hiirellä. Hiirtä tarvitaan vain, jos kansiosijainteja pitää muuttaa.
 
-Peruuttaa voi painamalla Shift ja Tab samanaikaisesti. 
+- `Tab` : Siirry eteenpäin
+- `Shift` ja `Tab` : Siirry taaksepäin
+- `Välilyönti` : Valitse
 
-Välilyönnin käyttö vastaa hiiren klikkausta. Tämä toimii myös valittaessa, poistetaanko lähdekansion kuvat.
+---
+## Asetukset
+Kuvatuksen asetuksia voi muuttaa muokkaamalla asetustiedostoa `config.ini` 
+tekstieditorissa (esim. Muistio) ja tallentamalla muutokset. Tiedostopäätettä ei saa muuttaa.
+
+### Kuvatuksen perusasetukset
+- `source` sisältää siirrettävien kuvien sijainnin.
+  - oletusarvoisesti `D`, joka kannettavilla tietokoneilla vastaa usein muistikorttia
+- `destination` sisältää siirrettävien kuvien kohdekansion 
+  - oletusarvoisesti käyttäjän oma `Kuvat`-kansio
+- `remove` on `1`, jos tiedostot halutaan poistaa lähdekansiosta siirron yhteydessä, muutoin `0`.
+  - oletusarvoisesti `1` 
+- `month_names` on `1`, jos luotavissa kuukausikansioissa halutaan käyttää myös kuukausien nimiä, muutoin `0`.
+  - oletusarvoisesti `1` 
+
+### Edistyneet asetukset
+- `store_under_user` on `1`, jos tiedostot tallennetaan 
+tietokoneelle kirjautuneen käyttäjän omiin tiedostoihin, muutoin `0`
+  - oletusarvoisesti `1`
+
+
+---
 
 
 
