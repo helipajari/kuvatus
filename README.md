@@ -13,7 +13,7 @@ Kuvatus ei poista tai korvaa jo olemassa olevia kansioita tai kuvia kohdekansios
 - [Käyttöohje](#Käyttöohje)
   - [Näppäimistökäyttöohje](#Näppäimistökäyttöohje)
 - [Asetukset](#Asetukset)
-  - [Kuvatukset perusasetukset](#Kuvatukset perusasetukset) 
+  - [Kuvatuksen perusasetukset](#Kuvatuksen perusasetukset) 
   - [Edistyneet asetukset](#Edistyneet asetukset)
 
 ---
