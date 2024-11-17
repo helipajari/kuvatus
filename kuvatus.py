@@ -9,9 +9,9 @@ import FreeSimpleGUI as gui
 from configparser import ConfigParser
 
 name = "Kuvatus"
-version = 1.0
 THEME = 'LightBlue'
 bg = 'pink'
+
 
 def create_config_file():
     path = 'config.ini'
@@ -22,6 +22,7 @@ def create_config_file():
     txt = f.read()
     f.close()
     os.write(fd, str.encode(txt))
+
 
 def read_config_file():
     if not os.path.exists("config.ini"):
@@ -73,7 +74,7 @@ def dialog():
               [gui.Button('Ok'), gui.Button('Sulje')]]
 
     # WINDOW MADE HERE
-    window = gui.Window(name + " " + version.__str__(), layout, return_keyboard_events=True, scaling=2.5)
+    window = gui.Window(name, layout, return_keyboard_events=True, icon='kuvatus.ico', scaling=2.5)
 
     old_element, old_bg = None, None
 
@@ -123,7 +124,7 @@ def done_dialog():
     layout = [[gui.Text('Valmis!')], [], [],
               [ok_btn], [], []]
 
-    window = gui.Window(name, layout, finalize=True)
+    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico')
     ok_btn.set_focus()
 
     while True:
@@ -152,7 +153,7 @@ def validation_error_dialog(src, dst):
     ok_btn = gui.Button('Ok', button_color=bg)
     layout += [[ok_btn], [], []]
 
-    window = gui.Window(name, layout, finalize=True)
+    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico')
     ok_btn.set_focus()
 
     while True:
