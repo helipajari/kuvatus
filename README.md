@@ -34,16 +34,16 @@ Lähdekansio:
 ```
 (Tyhjä) kohdekansio tiedostosiirron jälkeen:
 
-2023 (kansio)
-    - 01 (kansio)
+2023
+    - 01 tammi
         - 20230101.jpg
         - 20230102.jpg
         - 20230103.jpg
-    - 04 (kansio)
+    - 04 huhti
         - 20230410.jpg
 
-2024 (kansio)
-    - 02 (kansio)
+2024
+    - 02 helmi
         - 20240201.jpg
         - 20240202.jpg 
 ```
