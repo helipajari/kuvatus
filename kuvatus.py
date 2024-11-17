@@ -13,6 +13,7 @@ version = 1.0
 THEME = 'LightBlue'
 bg = 'pink'
 
+
 def create_config_file():
     path = 'config.ini'
     flags = os.O_RDWR | os.O_CREAT
@@ -23,13 +24,14 @@ def create_config_file():
     f.close()
     os.write(fd, str.encode(txt))
 
+
 def read_config_file():
     if not os.path.exists("config.ini"):
         create_config_file()
 
     config = ConfigParser()
 
-    config.read("config.ini")
+    config.read("config.ini", encoding="UTF-8")
 
     src = config['FILEPATHS']['source']
 
@@ -42,16 +44,21 @@ def read_config_file():
         dst = folder
 
     rmv = int(config['PREFERENCES']['remove'])
-    return src, dst, rmv
+
+    if int(config['PREFERENCES']['month_names']):
+        months = config['PREFERENCES']['months'].split('\n')
+        print(months)
+    else:
+        months = None
+
+    return src, dst, rmv, months
 
 
-def dialog():
+def dialog(init_src, init_dst, init_rmv, init_mths):
     gui.theme(THEME)
 
-    init_src, init_dst, init_rmv = read_config_file()
     src_str = 'Muuta'
 
-    # validate this elsewhere
     if not os.path.exists(init_src):
         init_src = "etsi kansio"
         src_str = 'Etsi'
@@ -109,7 +116,7 @@ def dialog():
             rmv = layout[2][0].get()
 
             if os.path.exists(src) and os.path.exists(dst):
-                return src, dst, rmv
+                return src, dst, rmv, months
             else:
                 validation_error_dialog(src, dst)
     window.close()
@@ -179,7 +186,7 @@ def create_dir_if_none(path_parts: [str]):
 
 
 # Copy files from src to dst if rmv True, else move
-def move_files(src, dst, rmv):
+def move_files(src, dst, rmv, months):
     files = [f for f in os.listdir(src) if os.path.isfile(os.path.join(src, f))]
 
     for file in files:
@@ -187,6 +194,10 @@ def move_files(src, dst, rmv):
 
         create_dir_if_none([dst, year])
 
+        # add suffix to month if mths is not None
+        month = month + ' ' + months[int(month) - 1] if months else month
+
+        # TOD) don't create duplicates! either 01 or 01 tammi existing is ok!
         create_dir_if_none([dst, year, month])
 
         file_source = path_join([src, file])
@@ -203,14 +214,17 @@ def move_files(src, dst, rmv):
 
 
 if __name__ == '__main__':
+    init_src, init_dst, init_rmv, init_mths = read_config_file()
+
     # get parameters from UI
-    params = dialog()
+    params = dialog(init_src, init_dst, init_rmv, init_mths)
 
     if params is None:
         sys.exit()
 
-    (source, destination, remove) = (params[0], params[1], params[2])
-    thread = threading.Thread(move_files(source, destination, remove))
+    # TODO change after UI option exists
+    (source, destination, remove, months) = (params[0], params[1], params[2], init_mths)
+    thread = threading.Thread(move_files(source, destination, remove, months))
     thread.start()
 
     done_dialog()
