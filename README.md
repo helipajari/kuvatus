@@ -1,4 +1,5 @@
-# Kuvatus - kuvien arkistointityökalu
+# ![alt text][logo] Kuvatus - kuvien arkistointityökalu
+[logo]: https://github.com/helipajari/kuvatus/kuvatus.png "Kuvatus-logo"
 
 Kuvatus on ohjelma, jolla voi siirtää kuvat esimerkiksi ulkoiselta muistikortilta haluttuun kansioon.
 Se luo automaattisesti kansiorakenteen vuosille ja kuukausille.
