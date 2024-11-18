@@ -44,16 +44,15 @@ def read_config_file():
 
     rmv = int(config['PREFERENCES']['remove'])
 
-    if int(config['PREFERENCES']['month_names']):
-        months = config['PREFERENCES']['months'].split('\n')
-        print(months)
-    else:
-        months = None
+    use_months = int(config['PREFERENCES']['month_names'])
 
-    return src, dst, rmv, months
+    months = config['PREFERENCES']['months'].split('\n')
+    print(months)
+
+    return src, dst, rmv, use_months, months
 
 
-def dialog(init_src, init_dst, init_rmv, init_mths):
+def main_dialog(init_src, init_dst, init_rmv, init_mths):
     gui.theme(THEME)
 
     src_str = 'Muuta'
@@ -118,6 +117,28 @@ def dialog(init_src, init_dst, init_rmv, init_mths):
                 return src, dst, rmv, months
             else:
                 validation_error_dialog(src, dst)
+    window.close()
+
+
+def months_config_error_dialog(mths):
+    gui.theme(THEME)
+
+    warning_title = gui.Text('Virhe ohjelma-asetuksissa!', font='bold')
+    warning = gui.Text('\nOdotettu kuukausien lukumäärä 12.\n\n'
+                       + 'Kuvatuksen asetuksiin on määritelty ' + str(mths) + ' kuukautta.\n\n'
+                       + 'Tarkista asetukset ja käynnistä Kuvatus uudelleen.\n')
+
+    ok_btn = gui.Button('Ok, sulje ohjelma')
+
+    layout = [[warning_title], [warning], [ok_btn]]
+
+    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico', scaling=1.5)
+
+    while True:
+        event, values = window.read()
+        if event == gui.WIN_CLOSED or event == 'Ok, sulje ohjelma':
+            break
+
     window.close()
 
 
@@ -213,16 +234,23 @@ def move_files(src, dst, rmv, months):
 
 
 if __name__ == '__main__':
-    init_src, init_dst, init_rmv, init_mths = read_config_file()
+    init_src, init_dst, init_rmv, init_use_mths, months = read_config_file()
+
+    # must have correct months even if months are not used
+    if len(init_mths) != 12:
+        months_config_error_dialog(len(init_mths))
+        sys.exit()
 
     # get parameters from UI
-    params = dialog(init_src, init_dst, init_rmv, init_mths)
+    params = main_dialog(init_src, init_dst, init_rmv, init_use_mths)
 
     if params is None:
         sys.exit()
 
-    # TODO change after UI option exists
-    (source, destination, remove, months) = (params[0], params[1], params[2], init_mths)
+    (source, destination, remove, use_months) = (params[0], params[1], params[2], init_use_mths)
+
+    months = months if use_months else None
+
     thread = threading.Thread(move_files(source, destination, remove, months))
     thread.start()
 
