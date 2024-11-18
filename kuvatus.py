@@ -1,12 +1,10 @@
 import os
-import re
 import shutil
 import sys
 import threading
-import time
+from configparser import ConfigParser
 
 import FreeSimpleGUI as gui
-from configparser import ConfigParser
 
 name = "Kuvatus"
 THEME = 'LightBlue'
@@ -46,10 +44,9 @@ def read_config_file():
 
     use_months = int(config['PREFERENCES']['month_names'])
 
-    months = config['PREFERENCES']['months'].split('\n')
-    print(months)
+    month_names = config['PREFERENCES']['months'].split('\n')
 
-    return src, dst, rmv, use_months, months
+    return src, dst, rmv, use_months, month_names
 
 
 def main_dialog(init_src, init_dst, init_rmv, init_mths):
@@ -164,20 +161,22 @@ def done_dialog():
 def validation_error_dialog(src, dst):
     gui.theme(THEME)
 
-    layout = [[gui.Text('Virhe!')], [], [],
-              [gui.Text('Tarkista seuraavat tiedot:')], [], [],
-              ]
+    layout = [[gui.Text('Virhe!')],
+              [gui.Text('Tarkista seuraavat tiedot:')]]
 
     if not os.path.exists(src):
-        src_gui = [[gui.Text("- lähdekansion polku")], [], []]
+        src_gui = [[gui.Text("- lähdekansion polku ei ole olemassa")]]
         layout += src_gui
 
     if not os.path.exists(dst):
-        dst_gui = [[gui.Text("- kohdekansion polku")], [], []]
+        dst_gui = [[gui.Text("- kohdekansion polku ei ole olemassa")]]
         layout += dst_gui
 
+    if src == dst:
+        layout += [[gui.Text("- lähdekansio on sama kuin kohdekansio")]]
+
     ok_btn = gui.Button('Ok', button_color=bg)
-    layout += [[ok_btn], [], []]
+    layout += [[ok_btn]]
 
     window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico')
     ok_btn.set_focus()
