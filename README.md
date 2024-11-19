@@ -1,9 +1,9 @@
-# <img src="kuvatus-small.png" width="50" alt-text="hello"> Kuvatus - kuvien arkistointityökalu 
+# <img src="kuvatus-small.png" width="50" alt-text="kuvatus-logo"> Kuvatus - kuvien arkistointityökalu 
 
 Kuvatus on ohjelma, jolla voi siirtää kuvat esimerkiksi ulkoiselta muistikortilta haluttuun kansioon.
 Se luo automaattisesti kansiorakenteen vuosille ja kuukausille.
 
-Kuvatus ei poista tai korvaa jo olemassa olevia kansioita tai kuvia kohdekansiosta. 
+Kuvatus ei poista tai korvaa jo olemassa olevia kansioita tai kohdekansiossa olevia kuvia. 
 
 ---
 
@@ -13,8 +13,8 @@ Kuvatus ei poista tai korvaa jo olemassa olevia kansioita tai kuvia kohdekansios
 - [Käyttöohje](#Käyttöohje)
   - [Näppäimistökäyttöohje](#Näppäimistökäyttöohje)
 - [Asetukset](#Asetukset)
-  - [Kuvatuksen perusasetukset](#Kuvatuksen perusasetukset) 
-  - [Edistyneet asetukset](#Edistyneet asetukset)
+  - [Kuvatuksen perusasetukset](#Kuvatuksen%20perusasetukset) 
+  - [Edistyneet asetukset](#Edistyneet%20asetukset)
 
 ---
 
@@ -49,8 +49,7 @@ Lähdekansio:
 ```
 **HUOMIO!** 
 
-- Kuvatus ei (toistaiseksi) etsi tiedostoja alakansioista, 
-eli siirrettävien tiedostojen on oltava kaikkien samassa kansiossa kuten esim. kameran muistikortilla. 
+- Kuvatus ei etsi tiedostoja alakansioista, eli siirrettävien tiedostojen on oltava kaikkien samassa kansiossa kuten esim. kameran muistikortilla. 
 - Kuvatuksen toiminta perustuu (toistaiseksi) päivämäärällä alkaviin tiedostonimiin.
 
 ---
@@ -67,9 +66,10 @@ eli siirrettävien tiedostojen on oltava kaikkien samassa kansiossa kuten esim. 
      - katso [Asetukset](#Asetukset) näiden muokkaamiseksi
    2. **HUOM** kansiota etsiessä tai muutettaessa on valittava `Valitse kansio`, muuten muutos ei tule voimaan.
 3. valitse, poistetaanko kuvat lähdekansiosta (tekstiä `Poistetaanko kuvat lähdekansiosta?` voi klikata hiirellä valinnan muuttamiseksi)
-4. paina `OK`
-5. siirto on valmis, kun ruutuun ilmestyy `Valmis!`-ikkuna. 
-6. paina `OK`.
+4. valitse, käytetäänkö kansioiden nimissä myös kuukausien nimiä numeroiden lisäksi (tekstiä `Käytä kuukausien nimiä kansiossa?` voi klikata hiirellä valinnan muuttamiseksi)
+5. paina `OK`
+6. siirto on valmis, kun ruutuun ilmestyy `Valmis!`-ikkuna. 
+7. paina `Ok, sulje ohjelma`.
 
 ### Näppäimistökäyttöohje
 
@@ -82,8 +82,9 @@ hiirellä. Hiirtä tarvitaan vain, jos kansiosijainteja pitää muuttaa.
 
 ---
 ## Asetukset
-Kuvatuksen asetuksia voi muuttaa muokkaamalla asetustiedostoa `config.ini` 
-tekstieditorissa (esim. Muistio) ja tallentamalla muutokset. Tiedostopäätettä ei saa muuttaa.
+Kuvatus tallentaa valitut tiedostopolut ja käyttöasetukset automaattisesti, kun tiedostoja siirretään.
+
+Kuvatuksen asetuksia voi myös muuttaa muokkaamalla asetustiedostoa `config.ini` tekstieditorissa (esim. Muistio) ja tallentamalla muutokset. Tiedostopäätettä ei saa muuttaa.
 
 ### Kuvatuksen perusasetukset
 - `source` sisältää siirrettävien kuvien sijainnin.
@@ -99,11 +100,3 @@ tekstieditorissa (esim. Muistio) ja tallentamalla muutokset. Tiedostopäätettä
 - `store_under_user` on `1`, jos tiedostot tallennetaan 
 tietokoneelle kirjautuneen käyttäjän omiin tiedostoihin, muutoin `0`
   - oletusarvoisesti `1`
-
-
----
-
-
-
-
----
