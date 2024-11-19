@@ -1,12 +1,10 @@
 import os
-import re
 import shutil
 import sys
 import threading
-import time
+from configparser import ConfigParser
 
 import FreeSimpleGUI as gui
-from configparser import ConfigParser
 
 name = "Kuvatus"
 THEME = 'LightBlue'
@@ -14,6 +12,9 @@ bg = 'pink'
 
 
 def create_config_file():
+    """
+    Creates config.ini from template in /config if one doesn't exist.
+    """
     path = 'config.ini'
     flags = os.O_RDWR | os.O_CREAT
     fd = os.open(path, flags)
@@ -24,13 +25,24 @@ def create_config_file():
     os.write(fd, str.encode(txt))
 
 
-def read_config_file():
+def get_config():
+    """
+    Returns ConfigParser() read from the config.ini
+    """
     if not os.path.exists("config.ini"):
         create_config_file()
 
     config = ConfigParser()
 
-    config.read("config.ini")
+    config.read("config.ini", encoding="UTF-8")
+    return config
+
+
+def read_config_file():
+    """
+    Reads program settings, returns src, dst, rmv, month_use, month_names
+    """
+    config = get_config()
 
     src = config['FILEPATHS']['source']
 
@@ -43,16 +55,34 @@ def read_config_file():
         dst = folder
 
     rmv = int(config['PREFERENCES']['remove'])
-    return src, dst, rmv
+
+    month_use = int(config['PREFERENCES']['month_names'])
+
+    month_names = config['PREFERENCES']['months'].split('\n')
+
+    return src, dst, rmv, month_use, month_names
 
 
-def dialog():
+def update_config_file(src, dst, rmv, month_use):
+    config = get_config()
+    config['FILEPATHS']['source'] = str(src)
+    config['FILEPATHS']['destination'] = str(dst)
+    config['FILEPATHS']['store_under_user'] = '0'       # user has provided a path, default setting not needed anymore
+    config.set('PREFERENCES', 'remove', '1' if rmv else '0')
+    config.set('PREFERENCES', 'month_names', '1' if month_use else '0')
+
+    with open('config.ini', 'w', encoding='UTF-8') as configfile:
+        config.write(configfile)
+
+
+def main_dialog(init_src, init_dst, init_rmv, init_mths):
+    """
+    Returns: source, dst, rmv, use
+    """
     gui.theme(THEME)
 
-    init_src, init_dst, init_rmv = read_config_file()
     src_str = 'Muuta'
 
-    # validate this elsewhere
     if not os.path.exists(init_src):
         init_src = "etsi kansio"
         src_str = 'Etsi'
@@ -66,11 +96,12 @@ def dialog():
     dst_btn = gui.FolderBrowse(dst_str, initial_folder=init_dst, key='dst')
 
     rmv_txt = [gui.Checkbox("Poista siirretyt kuvat lähdekansiosta?", default=init_rmv)]
+    use_mth = [gui.Checkbox("Käytä kuukausien nimiä kansioissa?", default=init_mths)]
 
-    # TODO add ability to save preferences
     layout = [[gui.Text('Lähdekansion polku: '), gui.Text(init_src), src_btn],
               [gui.Text('Kohdekansion polku: '), gui.Text(init_dst), dst_btn],
               rmv_txt,
+              use_mth,
               [gui.Button('Ok'), gui.Button('Sulje')]]
 
     # WINDOW MADE HERE
@@ -108,11 +139,34 @@ def dialog():
             src = layout[0][1].get()
             dst = layout[1][1].get()
             rmv = layout[2][0].get()
+            use = layout[3][0].get()
 
-            if os.path.exists(src) and os.path.exists(dst):
-                return src, dst, rmv
+            if os.path.exists(src) and os.path.exists(dst) and src != dst:
+                return src, dst, rmv, use
             else:
                 validation_error_dialog(src, dst)
+    window.close()
+
+
+def months_config_error_dialog(mths):
+    gui.theme(THEME)
+
+    warning_title = gui.Text('Virhe ohjelma-asetuksissa!', font='bold')
+    warning = gui.Text('\nOdotettu kuukausien lukumäärä 12.\n\n'
+                       + 'Kuvatuksen asetuksiin on määritelty ' + str(mths) + ' kuukautta.\n\n'
+                       + 'Tarkista asetukset ja käynnistä Kuvatus uudelleen.\n')
+
+    ok_btn = gui.Button('Ok, sulje ohjelma')
+
+    layout = [[warning_title], [warning], [ok_btn]]
+
+    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico', scaling=1.5)
+
+    while True:
+        event, values = window.read()
+        if event == gui.WIN_CLOSED or event == 'Ok, sulje ohjelma':
+            break
+
     window.close()
 
 
@@ -132,26 +186,30 @@ def done_dialog():
         if event == 'Ok':
             break
 
-    window.close()
-
 
 def validation_error_dialog(src, dst):
     gui.theme(THEME)
 
-    layout = [[gui.Text('Virhe!')], [], [],
-              [gui.Text('Tarkista seuraavat tiedot:')], [], [],
-              ]
+    layout = []
 
-    if not os.path.exists(src):
-        src_gui = [[gui.Text("- lähdekansion polku")], [], []]
-        layout += src_gui
+    if src == dst:
+        layout += [[gui.Text('Varoitus!')],
+                   [gui.Text("- lähdekansio on sama kuin kohdekansio")]]
 
-    if not os.path.exists(dst):
-        dst_gui = [[gui.Text("- kohdekansion polku")], [], []]
-        layout += dst_gui
+    else:
+        layout = [[gui.Text('Virhe!')],
+                  [gui.Text('Tarkista seuraavat tiedot:')]]
+
+        if not os.path.exists(src):
+            src_gui = [[gui.Text("- lähdekansion polku ei ole olemassa")]]
+            layout += src_gui
+
+        if not os.path.exists(dst):
+            dst_gui = [[gui.Text("- kohdekansion polku ei ole olemassa")]]
+            layout += dst_gui
 
     ok_btn = gui.Button('Ok', button_color=bg)
-    layout += [[ok_btn], [], []]
+    layout += [[ok_btn]]
 
     window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico')
     ok_btn.set_focus()
@@ -165,11 +223,17 @@ def validation_error_dialog(src, dst):
 
 
 def path_exists(path_parts: [str]):
+    """
+    Checks if the path formed by given array of strings exists.
+    """
     path = path_join(path_parts)
     return os.path.exists(path)
 
 
 def path_join(path_parts: [str]):
+    """
+    Makes a path out of an array of strings.
+    """
     return '/'.join(path_parts)
 
 
@@ -179,8 +243,31 @@ def create_dir_if_none(path_parts: [str]):
         os.mkdir(path)
 
 
-# Copy files from src to dst if rmv True, else move
-def move_files(src, dst, rmv):
+def check_month_name(path_parts: [str], short_conv: str, long_conv: str, use_mth: bool):
+    """
+    Checks if a folder under different naming convention wrt user choice exists.
+    Renames to new convention if yes, else creates a new folder if one doesn't exist yet.
+    """
+    short_path = path_join(path_parts + [short_conv])
+    long_path = path_join(path_parts + [long_conv])
+
+    if use_mth:
+        if os.path.exists(short_path):
+            os.rename(short_path, long_path)
+        elif not os.path.exists(long_path):
+            os.mkdir(long_path)
+
+    if not use_mth:
+        if os.path.exists(long_path):
+            os.rename(long_path, short_path)
+        elif not os.path.exists(short_path):
+            os.mkdir(short_path)
+
+
+def move_files(src, dst, rmv, use_months, months):
+    """
+        Copy files from src to dst if rmv True, else move
+    """
     files = [f for f in os.listdir(src) if os.path.isfile(os.path.join(src, f))]
 
     for file in files:
@@ -188,7 +275,12 @@ def move_files(src, dst, rmv):
 
         create_dir_if_none([dst, year])
 
-        create_dir_if_none([dst, year, month])
+        long_month = month + ' ' + months[int(month) - 1]
+
+        check_month_name([dst, year], month, long_month, bool(use_months))
+
+        if use_months:
+            month = long_month
 
         file_source = path_join([src, file])
         file_destination = path_join([dst, year, month, file])
@@ -204,14 +296,23 @@ def move_files(src, dst, rmv):
 
 
 if __name__ == '__main__':
-    # get parameters from UI
-    params = dialog()
+    init_src, init_dst, init_rmv, init_use_mths, months = read_config_file()
+
+    # must have correct number of months even if months are not used
+    if len(months) != 12:
+        months_config_error_dialog(len(months))
+        sys.exit()
+
+    params = main_dialog(init_src, init_dst, init_rmv, init_use_mths)
 
     if params is None:
         sys.exit()
 
-    (source, destination, remove) = (params[0], params[1], params[2])
-    thread = threading.Thread(move_files(source, destination, remove))
+    (source, destination, remove, use_months) = (params[0], params[1], params[2], params[3])
+
+    thread = threading.Thread(move_files(source, destination, remove, use_months, months))
     thread.start()
 
+    update_config_file(source, destination, remove, use_months)
     done_dialog()
+
