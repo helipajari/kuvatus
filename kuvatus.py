@@ -164,19 +164,23 @@ def done_dialog():
 def validation_error_dialog(src, dst):
     gui.theme(THEME)
 
-    layout = [[gui.Text('Virhe!')],
-              [gui.Text('Tarkista seuraavat tiedot:')]]
-
-    if not os.path.exists(src):
-        src_gui = [[gui.Text("- lähdekansion polku ei ole olemassa")]]
-        layout += src_gui
-
-    if not os.path.exists(dst):
-        dst_gui = [[gui.Text("- kohdekansion polku ei ole olemassa")]]
-        layout += dst_gui
+    layout = []
 
     if src == dst:
-        layout += [[gui.Text("- lähdekansio on sama kuin kohdekansio")]]
+        layout += [[gui.Text('Varoitus!')],
+                   [gui.Text("- lähdekansio on sama kuin kohdekansio")]]
+
+    else:
+        layout = [[gui.Text('Virhe!')],
+                  [gui.Text('Tarkista seuraavat tiedot:')]]
+
+        if not os.path.exists(src):
+            src_gui = [[gui.Text("- lähdekansion polku ei ole olemassa")]]
+            layout += src_gui
+
+        if not os.path.exists(dst):
+            dst_gui = [[gui.Text("- kohdekansion polku ei ole olemassa")]]
+            layout += dst_gui
 
     ok_btn = gui.Button('Ok', button_color=bg)
     layout += [[ok_btn]]
