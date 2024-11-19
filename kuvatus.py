@@ -12,6 +12,9 @@ bg = 'pink'
 
 
 def create_config_file():
+    """
+    Creates config.ini from template in /config if one doesn't exist.
+    """
     path = 'config.ini'
     flags = os.O_RDWR | os.O_CREAT
     fd = os.open(path, flags)
@@ -22,13 +25,24 @@ def create_config_file():
     os.write(fd, str.encode(txt))
 
 
-def read_config_file():
+def get_config():
+    """
+    Returns ConfigParser() read from the config.ini
+    """
     if not os.path.exists("config.ini"):
         create_config_file()
 
     config = ConfigParser()
 
     config.read("config.ini", encoding="UTF-8")
+    return config
+
+
+def read_config_file():
+    """
+    Reads program settings, returns src, dst, rmv, month_use, month_names
+    """
+    config = get_config()
 
     src = config['FILEPATHS']['source']
 
@@ -42,16 +56,28 @@ def read_config_file():
 
     rmv = int(config['PREFERENCES']['remove'])
 
-    use_months = int(config['PREFERENCES']['month_names'])
+    month_use = int(config['PREFERENCES']['month_names'])
 
     month_names = config['PREFERENCES']['months'].split('\n')
 
-    return src, dst, rmv, use_months, month_names
+    return src, dst, rmv, month_use, month_names
+
+
+def update_config_file(src, dst, rmv, month_use):
+    config = get_config()
+    config['FILEPATHS']['source'] = str(src)
+    config['FILEPATHS']['destination'] = str(dst)
+    config['FILEPATHS']['store_under_user'] = '0'       # user has provided a path, default setting not needed anymore
+    config.set('PREFERENCES', 'remove', '1' if rmv else '0')
+    config.set('PREFERENCES', 'month_names', '1' if month_use else '0')
+
+    with open('config.ini', 'w', encoding='UTF-8') as configfile:
+        config.write(configfile)
 
 
 def main_dialog(init_src, init_dst, init_rmv, init_mths):
     """
-    Returns: source, destination, remove, use
+    Returns: source, dst, rmv, use
     """
     gui.theme(THEME)
 
@@ -287,4 +313,6 @@ if __name__ == '__main__':
     thread = threading.Thread(move_files(source, destination, remove, use_months, months))
     thread.start()
 
+    update_config_file(source, destination, remove, use_months)
     done_dialog()
+
