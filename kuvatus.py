@@ -50,6 +50,9 @@ def read_config_file():
 
 
 def main_dialog(init_src, init_dst, init_rmv, init_mths):
+    """
+    Returns: source, destination, remove, use
+    """
     gui.theme(THEME)
 
     src_str = 'Muuta'
@@ -67,11 +70,12 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
     dst_btn = gui.FolderBrowse(dst_str, initial_folder=init_dst, key='dst')
 
     rmv_txt = [gui.Checkbox("Poista siirretyt kuvat lähdekansiosta?", default=init_rmv)]
+    use_mth = [gui.Checkbox("Käytä kuukausien nimiä kansioissa?", default=init_mths)]
 
-    # TODO add ability to save preferences
     layout = [[gui.Text('Lähdekansion polku: '), gui.Text(init_src), src_btn],
               [gui.Text('Kohdekansion polku: '), gui.Text(init_dst), dst_btn],
               rmv_txt,
+              use_mth,
               [gui.Button('Ok'), gui.Button('Sulje')]]
 
     # WINDOW MADE HERE
@@ -109,9 +113,10 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
             src = layout[0][1].get()
             dst = layout[1][1].get()
             rmv = layout[2][0].get()
+            use = layout[3][0].get()
 
-            if os.path.exists(src) and os.path.exists(dst):
-                return src, dst, rmv, months
+            if os.path.exists(src) and os.path.exists(dst) and src != dst:
+                return src, dst, rmv, use
             else:
                 validation_error_dialog(src, dst)
     window.close()
@@ -155,8 +160,6 @@ def done_dialog():
         if event == 'Ok':
             break
 
-    window.close()
-
 
 def validation_error_dialog(src, dst):
     gui.theme(THEME)
@@ -190,11 +193,17 @@ def validation_error_dialog(src, dst):
 
 
 def path_exists(path_parts: [str]):
+    """
+    Checks if the path formed by given array of strings exists.
+    """
     path = path_join(path_parts)
     return os.path.exists(path)
 
 
 def path_join(path_parts: [str]):
+    """
+    Makes a path out of an array of strings.
+    """
     return '/'.join(path_parts)
 
 
@@ -204,8 +213,31 @@ def create_dir_if_none(path_parts: [str]):
         os.mkdir(path)
 
 
-# Copy files from src to dst if rmv True, else move
-def move_files(src, dst, rmv, months):
+def check_month_name(path_parts: [str], short_conv: str, long_conv: str, use_mth: bool):
+    """
+    Checks if a folder under different naming convention wrt user choice exists.
+    Renames to new convention if yes, else creates a new folder if one doesn't exist yet.
+    """
+    short_path = path_join(path_parts + [short_conv])
+    long_path = path_join(path_parts + [long_conv])
+
+    if use_mth:
+        if os.path.exists(short_path):
+            os.rename(short_path, long_path)
+        elif not os.path.exists(long_path):
+            os.mkdir(long_path)
+
+    if not use_mth:
+        if os.path.exists(long_path):
+            os.rename(long_path, short_path)
+        elif not os.path.exists(short_path):
+            os.mkdir(short_path)
+
+
+def move_files(src, dst, rmv, use_months, months):
+    """
+        Copy files from src to dst if rmv True, else move
+    """
     files = [f for f in os.listdir(src) if os.path.isfile(os.path.join(src, f))]
 
     for file in files:
@@ -213,11 +245,12 @@ def move_files(src, dst, rmv, months):
 
         create_dir_if_none([dst, year])
 
-        # add suffix to month if mths is not None
-        month = month + ' ' + months[int(month) - 1] if months else month
+        long_month = month + ' ' + months[int(month) - 1]
 
-        # TOD) don't create duplicates! either 01 or 01 tammi existing is ok!
-        create_dir_if_none([dst, year, month])
+        check_month_name([dst, year], month, long_month, bool(use_months))
+
+        if use_months:
+            month = long_month
 
         file_source = path_join([src, file])
         file_destination = path_join([dst, year, month, file])
@@ -235,22 +268,19 @@ def move_files(src, dst, rmv, months):
 if __name__ == '__main__':
     init_src, init_dst, init_rmv, init_use_mths, months = read_config_file()
 
-    # must have correct months even if months are not used
-    if len(init_mths) != 12:
-        months_config_error_dialog(len(init_mths))
+    # must have correct number of months even if months are not used
+    if len(months) != 12:
+        months_config_error_dialog(len(months))
         sys.exit()
 
-    # get parameters from UI
     params = main_dialog(init_src, init_dst, init_rmv, init_use_mths)
 
     if params is None:
         sys.exit()
 
-    (source, destination, remove, use_months) = (params[0], params[1], params[2], init_use_mths)
+    (source, destination, remove, use_months) = (params[0], params[1], params[2], params[3])
 
-    months = months if use_months else None
-
-    thread = threading.Thread(move_files(source, destination, remove, months))
+    thread = threading.Thread(move_files(source, destination, remove, use_months, months))
     thread.start()
 
     done_dialog()
