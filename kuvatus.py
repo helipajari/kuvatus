@@ -152,21 +152,22 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
             if os.path.exists(src) and os.path.exists(dst) and src != dst:
                 return src, dst, rmv, use
             else:
-                validation_error_dialog(src, dst)
+                validation_warning_dialog(src, dst)
     window.close()
 
 
 def config_not_found_error_dialog():
     gui.theme(THEME)
     warning_title = gui.Text('Virhe asennuksessa!', font='bold')
-    warning = gui.Text('\nKuvatus ei löytänyt config-kansiota eikä voinut käynnistyä.\n'
-                       + 'Varmista, että kuvatus.exe (ei pikakuvake) ja config-kansio ovat samassa tasossa.\n'
+    warning = gui.Text('\nKuvatus ei löytänyt config-kansiota eikä voinut käynnistyä.\n\n'
+                       + 'Varmista, että kuvatus.exe (sovellus, ei pikakuvake)'
+                       + ' ja config-kansio ovat samassa tasossa.\n\n'
                        + 'Tarkista kansiorakenne ja käynnistä Kuvatus uudelleen.\n')
 
     ok_btn = gui.Button('Ok, sulje ohjelma')
     layout = [[warning_title], [warning], [ok_btn]]
 
-    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico', scaling=1.5)
+    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico', scaling=2)
 
     while True:
         event, values = window.read()
@@ -214,7 +215,7 @@ def done_dialog():
             break
 
 
-def validation_error_dialog(src, dst):
+def validation_warning_dialog(src, dst):
     gui.theme(THEME)
 
     layout = []
@@ -224,7 +225,7 @@ def validation_error_dialog(src, dst):
                    [gui.Text("- lähdekansio on sama kuin kohdekansio")]]
 
     else:
-        layout = [[gui.Text('Virhe!')],
+        layout = [[gui.Text('Varoitus!')],
                   [gui.Text('Tarkista seuraavat tiedot:')]]
 
         if not os.path.exists(src):
@@ -342,4 +343,3 @@ if __name__ == '__main__':
 
     update_config_file(source, destination, remove, use_months)
     done_dialog()
-
