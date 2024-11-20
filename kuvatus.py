@@ -9,6 +9,7 @@ import FreeSimpleGUI as gui
 name = "Kuvatus"
 THEME = 'LightBlue'
 bg = 'pink'
+IMG_PATH = 'src/img/'
 
 
 def create_config_file():
@@ -112,8 +113,7 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
               use_mth,
               [gui.Button('Ok'), gui.Button('Sulje')]]
 
-    # WINDOW MADE HERE
-    window = gui.Window(name, layout, return_keyboard_events=True, icon='kuvatus.ico', scaling=2.5)
+    window = get_window(layout)
 
     old_element, old_bg = None, None
 
@@ -158,16 +158,20 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
 
 def config_not_found_error_dialog():
     gui.theme(THEME)
+
     warning_title = gui.Text('Virhe asennuksessa!', font='bold')
+    img = get_error_img()
+
     warning = gui.Text('\nKuvatus ei löytänyt config-kansiota eikä voinut käynnistyä.\n\n'
-                       + 'Varmista, että kuvatus.exe (sovellus, ei pikakuvake)'
-                       + ' ja config-kansio ovat samassa tasossa.\n\n'
+                       + 'Varmista, että kuvatus.exe (sovellus, ei pikakuvake) ja\n'
+                       + 'config-kansio ovat samassa alakansiossa.\n\n'
                        + 'Tarkista kansiorakenne ja käynnistä Kuvatus uudelleen.\n')
 
     ok_btn = gui.Button('Ok, sulje ohjelma')
-    layout = [[warning_title], [warning], [ok_btn]]
 
-    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico', scaling=2)
+    layout = [[warning_title, img], [warning], [ok_btn]]
+
+    window = get_window(layout)
 
     while True:
         event, values = window.read()
@@ -181,14 +185,16 @@ def months_config_error_dialog(mths):
     gui.theme(THEME)
 
     warning_title = gui.Text('Virhe ohjelma-asetuksissa!', font='bold')
+    img = get_error_img()
+
     warning = gui.Text('\nOdotettu kuukausien lukumäärä 12.\n\n'
                        + 'Kuvatuksen asetuksiin on määritelty ' + str(mths) + ' kuukautta.\n\n'
                        + 'Tarkista asetukset ja käynnistä Kuvatus uudelleen.\n')
 
     ok_btn = gui.Button('Ok, sulje ohjelma')
-    layout = [[warning_title], [warning], [ok_btn]]
+    layout = [[warning_title, img], [warning], [ok_btn]]
 
-    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico', scaling=1.5)
+    window = get_window(layout)
 
     while True:
         event, values = window.read()
@@ -201,32 +207,32 @@ def months_config_error_dialog(mths):
 def done_dialog():
     gui.theme(THEME)
 
-    ok_btn = gui.Button('Ok', button_color=bg)
+    ok_btn = gui.Button('Ok, sulje ohjelma', button_color=bg)
+    img = get_succ_img()
 
-    layout = [[gui.Text('Valmis!')], [], [],
-              [ok_btn], [], []]
+    layout = [[gui.Text('Valmis!'), img],
+              [ok_btn]]
 
-    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico')
+    window = get_window(layout)
     ok_btn.set_focus()
 
     while True:
         event, values = window.read()
-        if event == 'Ok':
+        if event == 'Ok, sulje ohjelma':
             break
 
 
 def validation_warning_dialog(src, dst):
     gui.theme(THEME)
 
-    layout = []
+    title = gui.Text('Varoitus!')
+    img = get_warn_img()
+    layout = [[title, img]]
 
     if src == dst:
-        layout += [[gui.Text('Varoitus!')],
-                   [gui.Text("- lähdekansio on sama kuin kohdekansio")]]
-
+        layout += [[gui.Text("- lähdekansio on sama kuin kohdekansio")]]
     else:
-        layout = [[gui.Text('Varoitus!')],
-                  [gui.Text('Tarkista seuraavat tiedot:')]]
+        layout += [[gui.Text('Tarkista seuraavat tiedot:')]]
 
         if not os.path.exists(src):
             src_gui = [[gui.Text("- lähdekansion polku ei ole olemassa")]]
@@ -239,15 +245,45 @@ def validation_warning_dialog(src, dst):
     ok_btn = gui.Button('Ok', button_color=bg)
     layout += [[ok_btn]]
 
-    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico')
+    window = get_window(layout)
     ok_btn.set_focus()
 
     while True:
         event, values = window.read()
-        if event == 'Ok':
+        if event == 'Ok' or event == gui.WIN_CLOSED:
             break
 
     window.close()
+
+
+def get_window(layout: []):
+    icon = get_img_path('kuvatus logo.ico')
+    return gui.Window(title=name, layout=layout, icon=icon, finalize=True, return_keyboard_events=True, scaling=2.5)
+
+
+def get_img(img: str):
+    """
+    Returns an image object with specified image.
+    """
+    path = get_img_path(img)
+    return gui.Image(source=path, expand_x=True, subsample=6)
+
+
+def get_img_path(img: str):
+    """Helper function for getting images, returns path to specified image"""
+    return os.path.join(IMG_PATH, img)
+
+
+def get_succ_img():
+    return get_img('kuvatus success.png')
+
+
+def get_warn_img():
+    return get_img('kuvatus warning.png')
+
+
+def get_error_img():
+    return get_img('kuvatus error.png')
 
 
 def path_exists(path_parts: [str]):
