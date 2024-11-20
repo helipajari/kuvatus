@@ -43,7 +43,7 @@ def get_config():
 
     config = ConfigParser()
 
-    config.read("config.ini", encoding="UTF-8")
+    config.read("config.ini", encoding="utf-8")
     return config
 
 
@@ -80,7 +80,7 @@ def update_config_file(src, dst, rmv, month_use):
     config.set('PREFERENCES', 'remove', '1' if rmv else '0')
     config.set('PREFERENCES', 'month_names', '1' if month_use else '0')
 
-    with open('config.ini', 'w', encoding='UTF-8') as configfile:
+    with open('config.ini', 'w', encoding='utf-8') as configfile:
         config.write(configfile)
 
 
