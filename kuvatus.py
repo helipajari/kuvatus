@@ -14,15 +14,23 @@ bg = 'pink'
 def create_config_file():
     """
     Creates config.ini from template in /config if one doesn't exist.
+    Throws config_not_found error if /config doesn't exist.
     """
-    path = 'config.ini'
-    flags = os.O_RDWR | os.O_CREAT
-    fd = os.open(path, flags)
     default_path = 'config/config.ini'
-    f = open(default_path, 'r')
-    txt = f.read()
-    f.close()
-    os.write(fd, str.encode(txt))
+
+    try:
+        f = open(default_path, 'r')
+        txt = f.read()
+        f.close()
+
+        path = 'config.ini'
+        flags = os.O_RDWR | os.O_CREAT
+        fd = os.open(path, flags)
+
+        os.write(fd, str.encode(txt))
+    except FileNotFoundError:
+        config_not_found_error_dialog()
+        sys.exit()
 
 
 def get_config():
@@ -148,6 +156,26 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
     window.close()
 
 
+def config_not_found_error_dialog():
+    gui.theme(THEME)
+    warning_title = gui.Text('Virhe asennuksessa!', font='bold')
+    warning = gui.Text('\nKuvatus ei löytänyt config-kansiota eikä voinut käynnistyä.\n'
+                       + 'Varmista, että kuvatus.exe (ei pikakuvake) ja config-kansio ovat samassa tasossa.\n'
+                       + 'Tarkista kansiorakenne ja käynnistä Kuvatus uudelleen.\n')
+
+    ok_btn = gui.Button('Ok, sulje ohjelma')
+    layout = [[warning_title], [warning], [ok_btn]]
+
+    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico', scaling=1.5)
+
+    while True:
+        event, values = window.read()
+        if event == gui.WIN_CLOSED or event == 'Ok, sulje ohjelma':
+            break
+
+    window.close()
+
+
 def months_config_error_dialog(mths):
     gui.theme(THEME)
 
@@ -157,7 +185,6 @@ def months_config_error_dialog(mths):
                        + 'Tarkista asetukset ja käynnistä Kuvatus uudelleen.\n')
 
     ok_btn = gui.Button('Ok, sulje ohjelma')
-
     layout = [[warning_title], [warning], [ok_btn]]
 
     window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico', scaling=1.5)
