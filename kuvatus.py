@@ -90,25 +90,19 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
     """
     gui.theme(THEME)
 
-    src_str = 'Muuta'
+    src_txt = init_src if os.path.exists(init_src) else "etsi kansio"
+    src_str = 'Muuta' if src_txt is init_src else 'Etsi'
+    src_browse = gui.FolderBrowse(src_str, initial_folder=src_txt)
 
-    if not os.path.exists(init_src):
-        init_src = "etsi kansio"
-        src_str = 'Etsi'
-    src_btn = gui.FolderBrowse(src_str, initial_folder=init_src, key='src')
-
-    dst_str = 'Muuta'
-    if not os.path.exists(init_dst):
-        init_dst = "etsi kansio"
-        dst_str = 'Etsi'
-
-    dst_btn = gui.FolderBrowse(dst_str, initial_folder=init_dst, key='dst')
+    dst_txt = init_dst if os.path.exists(init_dst) else "etsi kansio"
+    dst_str = 'Muuta' if dst_txt is init_dst else 'Etsi'
+    dst_browse = gui.FolderBrowse(dst_str, initial_folder=dst_txt)
 
     rmv_txt = [gui.Checkbox("Poista siirretyt kuvat lähdekansiosta?", default=init_rmv)]
     use_mth = [gui.Checkbox("Käytä kuukausien nimiä kansioissa?", default=init_mths)]
 
-    layout = [[gui.Text('Lähdekansion polku: '), gui.Text(init_src), src_btn],
-              [gui.Text('Kohdekansion polku: '), gui.Text(init_dst), dst_btn],
+    layout = [[gui.Text('Lähdekansion polku: '), gui.Text(src_txt), src_browse],
+              [gui.Text('Kohdekansion polku: '), gui.Text(dst_txt), dst_browse],
               rmv_txt,
               use_mth,
               [gui.Button('Ok'), gui.Button('Sulje')]]
@@ -117,6 +111,7 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
 
     old_element, old_bg = None, None
 
+    # template items used for resetting the background color of unfocused elements
     base_btn = gui.Button('')
     base_chk = gui.Checkbox('')
 
