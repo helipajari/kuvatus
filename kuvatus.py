@@ -20,7 +20,7 @@ def create_config_file():
     default_path = 'config/config.ini'
 
     try:
-        f = open(default_path, 'r')
+        f = open(default_path, 'r', encoding="utf-8")
         txt = f.read()
         f.close()
 
