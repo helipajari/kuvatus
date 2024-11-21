@@ -158,9 +158,11 @@ def config_not_found_error_dialog():
     img = get_error_img()
 
     warning = gui.Text('\nKuvatus ei löytänyt config-kansiota eikä voinut käynnistyä.\n\n'
-                       + 'Varmista, että kuvatus.exe (sovellus, ei pikakuvake) ja\n'
-                       + 'config-kansio ovat samassa alakansiossa.\n\n'
-                       + 'Tarkista kansiorakenne ja käynnistä Kuvatus uudelleen.\n')
+                       + 'Varmista seuraavat kohdat:'
+                         '\n - kuvatus.exe (sovellus, ei pikakuvake) ja'
+                       + '\n   src-kansio ovat samassa alakansiossa'
+                       + '\n - config-kansio on src-kansiossa\n\n'
+                       + 'Tarkista tiedot ja käynnistä Kuvatus uudelleen.\n')
 
     ok_btn = gui.Button('Ok, sulje ohjelma')
 
@@ -184,7 +186,7 @@ def months_config_error_dialog(mths):
 
     warning = gui.Text('\nOdotettu kuukausien lukumäärä 12.\n\n'
                        + 'Kuvatuksen asetuksiin on määritelty ' + str(mths) + ' kuukautta.\n\n'
-                       + 'Tarkista asetukset ja käynnistä Kuvatus uudelleen.\n')
+                       + 'Tarkista asetukset config.ini-tiedostossa ja käynnistä Kuvatus uudelleen.\n')
 
     ok_btn = gui.Button('Ok, sulje ohjelma')
     layout = [[warning_title, img], [warning], [ok_btn]]
@@ -224,18 +226,20 @@ def validation_warning_dialog(src, dst):
     img = get_warn_img()
     layout = [[title, img]]
 
+    layout += [[gui.Text('Kuvatus ei voi siirtää tiedostoja koska:')]]
+
+    if not os.path.exists(src):
+        src_gui = [[gui.Text(" - lähdekansion polku ei ole olemassa")]]
+        layout += src_gui
+
+    if not os.path.exists(dst):
+        dst_gui = [[gui.Text(" - kohdekansion polku ei ole olemassa")]]
+        layout += dst_gui
+
     if src == dst:
-        layout += [[gui.Text("- lähdekansio on sama kuin kohdekansio")]]
-    else:
-        layout += [[gui.Text('Tarkista seuraavat tiedot:')]]
+        layout += [[gui.Text(" - lähdekansio on sama kuin kohdekansio")]]
 
-        if not os.path.exists(src):
-            src_gui = [[gui.Text("- lähdekansion polku ei ole olemassa")]]
-            layout += src_gui
-
-        if not os.path.exists(dst):
-            dst_gui = [[gui.Text("- kohdekansion polku ei ole olemassa")]]
-            layout += dst_gui
+    layout += [[gui.Text("Tarkista tiedot ja yritä uudelleen.")]]
 
     ok_btn = gui.Button('Ok', button_color=bg)
     layout += [[ok_btn]]
