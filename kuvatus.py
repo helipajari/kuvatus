@@ -17,7 +17,7 @@ def create_config_file():
     Creates config.ini from template in /config if one doesn't exist.
     Throws config_not_found error if /config doesn't exist.
     """
-    default_path = 'config/config.ini'
+    default_path = 'src/config/config_template.ini'
 
     try:
         f = open(default_path, 'r', encoding="utf-8")
@@ -36,7 +36,7 @@ def create_config_file():
 
 def get_config():
     """
-    Returns ConfigParser() read from the config.ini
+    Returns ConfigParser() read from config.ini
     """
     if not os.path.exists("config.ini"):
         create_config_file()
