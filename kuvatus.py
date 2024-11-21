@@ -9,32 +9,41 @@ import FreeSimpleGUI as gui
 name = "Kuvatus"
 THEME = 'LightBlue'
 bg = 'pink'
+IMG_PATH = 'src/img/'
 
 
 def create_config_file():
     """
     Creates config.ini from template in /config if one doesn't exist.
+    Throws config_not_found error if /config doesn't exist.
     """
-    path = 'config.ini'
-    flags = os.O_RDWR | os.O_CREAT
-    fd = os.open(path, flags)
-    default_path = 'config/config.ini'
-    f = open(default_path, 'r')
-    txt = f.read()
-    f.close()
-    os.write(fd, str.encode(txt))
+    default_path = 'src/config/config_template.ini'
+
+    try:
+        f = open(default_path, 'r', encoding="utf-8")
+        txt = f.read()
+        f.close()
+
+        path = 'config.ini'
+        flags = os.O_RDWR | os.O_CREAT
+        fd = os.open(path, flags)
+
+        os.write(fd, str.encode(txt))
+    except FileNotFoundError:
+        config_not_found_error_dialog()
+        sys.exit()
 
 
 def get_config():
     """
-    Returns ConfigParser() read from the config.ini
+    Returns ConfigParser() read from config.ini
     """
     if not os.path.exists("config.ini"):
         create_config_file()
 
     config = ConfigParser()
 
-    config.read("config.ini", encoding="UTF-8")
+    config.read("config.ini", encoding="utf-8")
     return config
 
 
@@ -71,7 +80,7 @@ def update_config_file(src, dst, rmv, month_use):
     config.set('PREFERENCES', 'remove', '1' if rmv else '0')
     config.set('PREFERENCES', 'month_names', '1' if month_use else '0')
 
-    with open('config.ini', 'w', encoding='UTF-8') as configfile:
+    with open('config.ini', 'w', encoding='utf-8') as configfile:
         config.write(configfile)
 
 
@@ -81,34 +90,28 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
     """
     gui.theme(THEME)
 
-    src_str = 'Muuta'
+    src_txt = init_src if os.path.exists(init_src) else "etsi kansio"
+    src_str = 'Muuta' if src_txt is init_src else 'Etsi'
+    src_browse = gui.FolderBrowse(src_str, initial_folder=src_txt)
 
-    if not os.path.exists(init_src):
-        init_src = "etsi kansio"
-        src_str = 'Etsi'
-    src_btn = gui.FolderBrowse(src_str, initial_folder=init_src, key='src')
-
-    dst_str = 'Muuta'
-    if not os.path.exists(init_dst):
-        init_dst = "etsi kansio"
-        dst_str = 'Etsi'
-
-    dst_btn = gui.FolderBrowse(dst_str, initial_folder=init_dst, key='dst')
+    dst_txt = init_dst if os.path.exists(init_dst) else "etsi kansio"
+    dst_str = 'Muuta' if dst_txt is init_dst else 'Etsi'
+    dst_browse = gui.FolderBrowse(dst_str, initial_folder=dst_txt)
 
     rmv_txt = [gui.Checkbox("Poista siirretyt kuvat lähdekansiosta?", default=init_rmv)]
     use_mth = [gui.Checkbox("Käytä kuukausien nimiä kansioissa?", default=init_mths)]
 
-    layout = [[gui.Text('Lähdekansion polku: '), gui.Text(init_src), src_btn],
-              [gui.Text('Kohdekansion polku: '), gui.Text(init_dst), dst_btn],
+    layout = [[gui.Text('Lähdekansion polku: '), gui.Text(src_txt), src_browse],
+              [gui.Text('Kohdekansion polku: '), gui.Text(dst_txt), dst_browse],
               rmv_txt,
               use_mth,
               [gui.Button('Ok'), gui.Button('Sulje')]]
 
-    # WINDOW MADE HERE
-    window = gui.Window(name, layout, return_keyboard_events=True, icon='kuvatus.ico', scaling=2.5)
+    window = get_window(layout)
 
     old_element, old_bg = None, None
 
+    # template items used for resetting the background color of unfocused elements
     base_btn = gui.Button('')
     base_chk = gui.Checkbox('')
 
@@ -144,7 +147,34 @@ def main_dialog(init_src, init_dst, init_rmv, init_mths):
             if os.path.exists(src) and os.path.exists(dst) and src != dst:
                 return src, dst, rmv, use
             else:
-                validation_error_dialog(src, dst)
+                validation_warning_dialog(src, dst)
+    window.close()
+
+
+def config_not_found_error_dialog():
+    gui.theme(THEME)
+
+    warning_title = gui.Text('Virhe asennuksessa!', font='bold')
+    img = get_error_img()
+
+    warning = gui.Text('\nKuvatus ei löytänyt config-kansiota eikä voinut käynnistyä.\n\n'
+                       + 'Varmista seuraavat kohdat:'
+                         '\n - kuvatus.exe (sovellus, ei pikakuvake) ja'
+                       + '\n   src-kansio ovat samassa alakansiossa'
+                       + '\n - config-kansio on src-kansiossa\n\n'
+                       + 'Tarkista tiedot ja käynnistä Kuvatus uudelleen.\n')
+
+    ok_btn = gui.Button('Ok, sulje ohjelma')
+
+    layout = [[warning_title, img], [warning], [ok_btn]]
+
+    window = get_window(layout)
+
+    while True:
+        event, values = window.read()
+        if event == gui.WIN_CLOSED or event == 'Ok, sulje ohjelma':
+            break
+
     window.close()
 
 
@@ -152,15 +182,16 @@ def months_config_error_dialog(mths):
     gui.theme(THEME)
 
     warning_title = gui.Text('Virhe ohjelma-asetuksissa!', font='bold')
+    img = get_error_img()
+
     warning = gui.Text('\nOdotettu kuukausien lukumäärä 12.\n\n'
                        + 'Kuvatuksen asetuksiin on määritelty ' + str(mths) + ' kuukautta.\n\n'
-                       + 'Tarkista asetukset ja käynnistä Kuvatus uudelleen.\n')
+                       + 'Tarkista asetukset config.ini-tiedostossa ja käynnistä Kuvatus uudelleen.\n')
 
     ok_btn = gui.Button('Ok, sulje ohjelma')
+    layout = [[warning_title, img], [warning], [ok_btn]]
 
-    layout = [[warning_title], [warning], [ok_btn]]
-
-    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico', scaling=1.5)
+    window = get_window(layout)
 
     while True:
         event, values = window.read()
@@ -173,53 +204,85 @@ def months_config_error_dialog(mths):
 def done_dialog():
     gui.theme(THEME)
 
-    ok_btn = gui.Button('Ok', button_color=bg)
+    ok_btn = gui.Button('Ok, sulje ohjelma', button_color=bg)
+    img = get_succ_img()
 
-    layout = [[gui.Text('Valmis!')], [], [],
-              [ok_btn], [], []]
+    layout = [[gui.Text('Valmis!'), img],
+              [ok_btn]]
 
-    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico')
+    window = get_window(layout)
     ok_btn.set_focus()
 
     while True:
         event, values = window.read()
-        if event == 'Ok':
+        if event == 'Ok, sulje ohjelma':
             break
 
 
-def validation_error_dialog(src, dst):
+def validation_warning_dialog(src, dst):
     gui.theme(THEME)
 
-    layout = []
+    title = gui.Text('Varoitus!')
+    img = get_warn_img()
+    layout = [[title, img]]
+
+    layout += [[gui.Text('Kuvatus ei voi siirtää tiedostoja koska:')]]
+
+    if not os.path.exists(src):
+        src_gui = [[gui.Text(" - lähdekansion polku ei ole olemassa")]]
+        layout += src_gui
+
+    if not os.path.exists(dst):
+        dst_gui = [[gui.Text(" - kohdekansion polku ei ole olemassa")]]
+        layout += dst_gui
 
     if src == dst:
-        layout += [[gui.Text('Varoitus!')],
-                   [gui.Text("- lähdekansio on sama kuin kohdekansio")]]
+        layout += [[gui.Text(" - lähdekansio on sama kuin kohdekansio")]]
 
-    else:
-        layout = [[gui.Text('Virhe!')],
-                  [gui.Text('Tarkista seuraavat tiedot:')]]
-
-        if not os.path.exists(src):
-            src_gui = [[gui.Text("- lähdekansion polku ei ole olemassa")]]
-            layout += src_gui
-
-        if not os.path.exists(dst):
-            dst_gui = [[gui.Text("- kohdekansion polku ei ole olemassa")]]
-            layout += dst_gui
+    layout += [[gui.Text("Tarkista tiedot ja yritä uudelleen.")]]
 
     ok_btn = gui.Button('Ok', button_color=bg)
     layout += [[ok_btn]]
 
-    window = gui.Window(name, layout, finalize=True, icon='kuvatus.ico')
+    window = get_window(layout)
     ok_btn.set_focus()
 
     while True:
         event, values = window.read()
-        if event == 'Ok':
+        if event == 'Ok' or event == gui.WIN_CLOSED:
             break
 
     window.close()
+
+
+def get_window(layout: []):
+    icon = get_img_path('kuvatus logo.ico')
+    return gui.Window(title=name, layout=layout, icon=icon, finalize=True, return_keyboard_events=True, scaling=2.5)
+
+
+def get_img(img: str):
+    """
+    Returns an image object with specified image.
+    """
+    path = get_img_path(img)
+    return gui.Image(source=path, expand_x=True, subsample=6)
+
+
+def get_img_path(img: str):
+    """Helper function for getting images, returns path to specified image"""
+    return os.path.join(IMG_PATH, img)
+
+
+def get_succ_img():
+    return get_img('kuvatus success.png')
+
+
+def get_warn_img():
+    return get_img('kuvatus warning.png')
+
+
+def get_error_img():
+    return get_img('kuvatus error.png')
 
 
 def path_exists(path_parts: [str]):
@@ -315,4 +378,3 @@ if __name__ == '__main__':
 
     update_config_file(source, destination, remove, use_months)
     done_dialog()
-

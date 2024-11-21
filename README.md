@@ -1,9 +1,13 @@
-# <img src="kuvatus-small.png" width="50" alt-text="kuvatus-logo"> Kuvatus - kuvien arkistointityökalu 
+# <img src="src/img/kuvatus logo.png" width="50" alt-text="kuvatus logo"> Kuvatus - kuvien arkistointityökalu
+Kuvatus on ohjelma, jolla voi siirtää kuvatiedostoja.
+Se luo kohdekansiooon kansiorakenteen vuosille ja kuukausille 
+siirrettävien kuvien tiedostonimien perusteella.
 
-Kuvatus on ohjelma, jolla voi siirtää kuvat esimerkiksi ulkoiselta muistikortilta haluttuun kansioon.
-Se luo automaattisesti kansiorakenteen vuosille ja kuukausille.
+Kuvatus ei poista jo olemassa olevia kansioita tai kohdekansiossa olevia kuvia. 
 
-Kuvatus ei poista tai korvaa jo olemassa olevia kansioita tai kohdekansiossa olevia kuvia. 
+Kuvatus toimii toistaiseksi vain tiedostonimillä, jotka alkavat päivämäärällä:
+- 20230101... toimii
+- IMG_20230101... ei toimi
 
 ---
 
@@ -13,8 +17,6 @@ Kuvatus ei poista tai korvaa jo olemassa olevia kansioita tai kohdekansiossa ole
 - [Käyttöohje](#Käyttöohje)
   - [Näppäimistökäyttöohje](#Näppäimistökäyttöohje)
 - [Asetukset](#Asetukset)
-  - [Kuvatuksen perusasetukset](#Kuvatuksen%20perusasetukset) 
-  - [Edistyneet asetukset](#Edistyneet%20asetukset)
 
 ---
 
@@ -53,9 +55,8 @@ Lähdekansio:
 - Kuvatuksen toiminta perustuu (toistaiseksi) päivämäärällä alkaviin tiedostonimiin.
 
 ---
-## Asennusohje 
+## Asennusohje käyttäjälle
 0. TBA
-
 ---
 
 ## Käyttöohje 
@@ -82,21 +83,15 @@ hiirellä. Hiirtä tarvitaan vain, jos kansiosijainteja pitää muuttaa.
 
 ---
 ## Asetukset
-Kuvatus tallentaa valitut tiedostopolut ja käyttöasetukset automaattisesti, kun tiedostoja siirretään.
+Kuvatus tallentaa valitut tiedostopolut ja käyttöasetukset automaattisesti asetustiedostoon `config.ini`, kun tiedostoja siirretään.
 
-Kuvatuksen asetuksia voi myös muuttaa muokkaamalla asetustiedostoa `config.ini` tekstieditorissa (esim. Muistio) ja tallentamalla muutokset. Tiedostopäätettä ei saa muuttaa.
+Jos `config.ini`-tiedostoa ei löydy, Kuvatus luo sellaisen oletusasetuksilla. 
+Oletusasetuksina kuvien lähdekansio on D-levy, kohde käyttäjän Kuvat-kansio, 
+kuvat poistetaan lähdekansiosta siirron jälkeen ja kansioissa käytetään kuukausien nimiä.
 
-### Kuvatuksen perusasetukset
-- `source` sisältää siirrettävien kuvien sijainnin.
-  - oletusarvoisesti `D`, joka kannettavilla tietokoneilla vastaa usein muistikorttia
-- `destination` sisältää siirrettävien kuvien kohdekansion 
-  - oletusarvoisesti käyttäjän oma `Kuvat`-kansio
-- `remove` on `1`, jos tiedostot halutaan poistaa lähdekansiosta siirron yhteydessä, muutoin `0`.
-  - oletusarvoisesti `1` 
-- `month_names` on `1`, jos luotavissa kuukausikansioissa halutaan käyttää myös kuukausien nimiä, muutoin `0`.
-  - oletusarvoisesti `1` 
 
-### Edistyneet asetukset
-- `store_under_user` on `1`, jos tiedostot tallennetaan 
-tietokoneelle kirjautuneen käyttäjän omiin tiedostoihin, muutoin `0`
-  - oletusarvoisesti `1`
+### Kuukausien nimet
+Kuukausien nimiä voi vaihtaa muokkaamalla asetustiedostoa tekstieditorissa (esim. Muistio)
+ja tallentamalla muutokset.
+
+Tiedostopäätettä `ini` ei saa muuttaa.
