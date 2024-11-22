@@ -1,13 +1,27 @@
-# <img src="src/img/kuvatus logo.png" width="50" alt-text="kuvatus logo"> Kuvatus - kuvien arkistointityökalu
-Kuvatus on ohjelma, jolla voi siirtää kuvatiedostoja.
+# <img src="src/img/kuvatus logo.png" width="50" alt-text="kuvatus logo"> Kuvatus - tiedostojen arkistointityökalu
+Kuvatus on ohjelma, jolla voi siirtää (kuva)tiedostoja.
 Se luo kohdekansiooon kansiorakenteen vuosille ja kuukausille 
-siirrettävien kuvien tiedostonimien perusteella.
+arkistoitavien tiedostojen nimien perusteella.
 
-Kuvatus ei poista jo olemassa olevia kansioita tai kohdekansiossa olevia kuvia. 
+Kuvatus ei poista jo olemassa olevia kansioita tai korvaa kohdekansiossa olevia tiedostoja.
 
-Kuvatus toimii toistaiseksi vain tiedostonimillä, jotka alkavat päivämäärällä:
-- 20230101... toimii
-- IMG_20230101... ei toimi
+Kuvatus siirtää tiedostot, joiden nimessä on:
+
+- vähintään 6 numeroa (vvvvkk)
+- ensimmäiset 4 numeroa voivat olla mitä tahansa
+- viides ja kuudes numero yhteenliitettynä ovat välillä 1-12
+
+Muussa tapauksessa Kuvatus ohittaa tiedoston eikä tee sille mitään.
+
+Esimerkkejä tiedostonimistä, jotka Kuvatus voi arkistoida:
+- `20230102.jpg`
+- `IMG_20240302.jpg`
+- `WIN_20240102 Riikan kissat (harmaa ja musta).jpg`
+- `1803 12 tarkka päivämäärä ei tiedossa.png`
+- `2005-10-23 tekstitiedosto versio 2.txt`
+- Huom: myös `CSE1105 video(10).mp4` arkistoituu, koska nimessä on 6 numeroa! 
+
+
 
 ---
 
@@ -51,8 +65,7 @@ Lähdekansio:
 ```
 **HUOMIO!** 
 
-- Kuvatus ei etsi tiedostoja alakansioista, eli siirrettävien tiedostojen on oltava kaikkien samassa kansiossa kuten esim. kameran muistikortilla. 
-- Kuvatuksen toiminta perustuu (toistaiseksi) päivämäärällä alkaviin tiedostonimiin.
+Kuvatus ei etsi tiedostoja alakansioista, eli siirrettävien tiedostojen on oltava kaikkien samassa kansiossa kuten esim. kameran muistikortilla.
 
 ---
 ## Asennusohje käyttäjälle
@@ -64,7 +77,7 @@ Lähdekansio:
 2. tarkista lähde- ja kohdekansioiden sijainti, etsi tai muuta niitä tarvittaessa
    - lähdekansio on oletusarvona tietokoneen `D`-levy, joka läppäreitä käyttäessä on yleensä muistikortti
    - kohdekansio on oletusarvoisesti käyttäjän oma `Kuvat`-kansio
-     - katso [Asetukset](#Asetukset) näiden muokkaamiseksi
+     - katso kohta [Asetukset](#Asetukset) näiden muokkaamiseksi
    2. **HUOM** kansiota etsiessä tai muutettaessa on valittava `Valitse kansio`, muuten muutos ei tule voimaan.
 3. valitse, poistetaanko kuvat lähdekansiosta (tekstiä `Poistetaanko kuvat lähdekansiosta?` voi klikata hiirellä valinnan muuttamiseksi)
 4. valitse, käytetäänkö kansioiden nimissä myös kuukausien nimiä numeroiden lisäksi (tekstiä `Käytä kuukausien nimiä kansiossa?` voi klikata hiirellä valinnan muuttamiseksi)
