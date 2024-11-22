@@ -1,7 +1,7 @@
 import os
+import re
 import shutil
 import sys
-import threading
 from configparser import ConfigParser
 
 import FreeSimpleGUI as gui
@@ -330,32 +330,48 @@ def check_month_name(path_parts: [str], short_conv: str, long_conv: str, use_mth
 def move_files(src, dst, rmv, use_months, months):
     """
         Copy files from src to dst if rmv True, else move
+        Returns a tuple of lists: files, files not moved
     """
     files = [f for f in os.listdir(src) if os.path.isfile(os.path.join(src, f))]
+    files_not_moved = []
 
     for file in files:
-        year, month = file[:4], file[4:6]
+        # ([A-Z]*[a-z]*[ .,\(\)\-\_]*)
+        file_strip = re.sub('[A-Za-z-_,.() ]', '', file)
 
-        create_dir_if_none([dst, year])
+        try:
+            year, month = file_strip[:4], file_strip[4:6]
+            month_n = int(month)
 
-        long_month = month + ' ' + months[int(month) - 1]
+            if month_n < 1 or month_n > 12:
+                files_not_moved += file
+                continue
 
-        check_month_name([dst, year], month, long_month, bool(use_months))
+            create_dir_if_none([dst, year])
 
-        if use_months:
-            month = long_month
+            long_month = month + ' ' + months[month_n - 1]
 
-        file_source = path_join([src, file])
-        file_destination = path_join([dst, year, month, file])
+            check_month_name([dst, year], month, long_month, bool(use_months))
 
-        if not os.path.exists(file_destination):
-            if rmv:
-                os.rename(file_source, file_destination)
-            else:
-                shutil.copy(file_source, file_destination)
+            if use_months:
+                month = long_month
 
-        elif rmv:
-            os.remove(file_source)
+            file_source = path_join([src, file])
+            file_destination = path_join([dst, year, month, file])
+
+            if not os.path.exists(file_destination):
+                if rmv:
+                    os.rename(file_source, file_destination)
+                else:
+                    shutil.copy(file_source, file_destination)
+            elif rmv:
+                os.remove(file_source)
+
+        except ValueError:      # not enough numbers left in name to possibly contain yyyymm
+            files_not_moved += file
+            continue
+
+    return files, files_not_moved
 
 
 if __name__ == '__main__':
@@ -372,9 +388,7 @@ if __name__ == '__main__':
         sys.exit()
 
     (source, destination, remove, use_months) = (params[0], params[1], params[2], params[3])
-
-    thread = threading.Thread(move_files(source, destination, remove, use_months, months))
-    thread.start()
+    (fs, ns) = move_files(source, destination, remove, use_months, months)
 
     update_config_file(source, destination, remove, use_months)
     done_dialog()
