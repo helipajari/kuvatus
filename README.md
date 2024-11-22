@@ -1,5 +1,5 @@
 # <img src="src/img/kuvatus logo.png" width="50" alt-text="kuvatus logo"> Kuvatus - tiedostojen arkistointityökalu
-Kuvatus on ohjelma, jolla voi siirtää (kuva)tiedostoja.
+Kuvatus on ohjelma, jolla voi arkistoida (kuva)tiedostoja.
 Se luo kohdekansiooon kansiorakenteen vuosille ja kuukausille 
 arkistoitavien tiedostojen nimien perusteella.
 
@@ -7,9 +7,9 @@ Kuvatus ei poista jo olemassa olevia kansioita tai korvaa kohdekansiossa olevia 
 
 Kuvatus siirtää tiedostot, joiden nimessä on:
 
-- vähintään 6 numeroa (vvvvkk)
+- vähintään 6 numeroa (etsitty formaatti on vvvvkk)
 - ensimmäiset 4 numeroa voivat olla mitä tahansa
-- viides ja kuudes numero yhteenliitettynä ovat välillä 1-12
+- viides ja kuudes numero yhteenliitettynä ovat välillä 01-12
 
 Muussa tapauksessa Kuvatus ohittaa tiedoston eikä tee sille mitään.
 
@@ -68,12 +68,37 @@ Lähdekansio:
 Kuvatus ei etsi tiedostoja alakansioista, eli siirrettävien tiedostojen on oltava kaikkien samassa kansiossa kuten esim. kameran muistikortilla.
 
 ---
-## Asennusohje käyttäjälle
-0. TBA
+## Asennusohje
+Vaihe 1/3 - Lähdekoodin lataaminen:
+1. tarkista, että valittu välilehti GitHubissa on `Code`
+2. valitse vihreä `Code`-valikko
+3. valitse `Download ZIP`
+![](src/readme/download.png)
+
+Vaihe 2/3 - Lähdekoodipaketin purku:
+4. avaa tietokoneen Ladatut tiedostot-kansio
+5. avaa `kuvatus-main.zip`-tiedoston valikko hiiren kakkospainikkeella ja valitse `Pura kaikki...`
+6. noudata purkuohjeita, valitse `Näytä lopuksi puretut tiedostot`
+   1. tämä on Kuvatuksen asennuskansio
+![](src/readme/unzip.png)
+
+
+Vaihde 3/3 - Käyttöönotto:
+7. kansiossa, johon `kuvatus-main.zip` purettiin edellisessä vaiheessa:
+8. suorita pikakuvake-sovellus tuplaklikkaamalla sitä
+   1. tämä luo työpöydälle pikakuvakkeen, jonka kautta Kuvatusta voi käyttää
+   2. jos Windows Defender varoittaa tuntemattoman sovelluksen suorittamisesta,
+    valitse `Lisätietoja` ja `Suorita joka tapauksessa` 
+9. Kuvatus on valmis käytettäväksi!
+   1. Windows Defender voi varoittaa tuntemattoman sovelluksen suorittamisesta, toimi kuten edellä
+   2. Jos Kuvatus ei käynnisty, kokeile siirtää Kuvatuksen asennuskansio esimerkiksi Tiedostot-kansioon ja palaa ohjeen kohtaan 8
+   
+![](src/readme/pikakuvake.png)
+
 ---
 
 ## Käyttöohje 
-1. käynnistä Kuvatus
+1. käynnistä Kuvatus työpöydän pikakuvakkeesta
 2. tarkista lähde- ja kohdekansioiden sijainti, etsi tai muuta niitä tarvittaessa
    - lähdekansio on oletusarvona tietokoneen `D`-levy, joka läppäreitä käyttäessä on yleensä muistikortti
    - kohdekansio on oletusarvoisesti käyttäjän oma `Kuvat`-kansio
