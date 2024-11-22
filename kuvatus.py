@@ -336,10 +336,13 @@ def move_files(src, dst, rmv, use_months, months):
     files_not_moved = []
 
     for file in files:
-        # ([A-Z]*[a-z]*[ .,\(\)\-\_]*)
-        file_strip = re.sub('[A-Za-z-_,.() ]', '', file)
+        file_stripped_type = re.sub('\.[A-Za-z0-9]+', '', file)
+        file_strip = re.sub('[A-Za-z-_,() ]', '', file_stripped_type).replace(" ", "")
 
         try:
+            if len(file_strip) < 6:
+                continue
+
             year, month = file_strip[:4], file_strip[4:6]
             month_n = int(month)
 
