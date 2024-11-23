@@ -69,31 +69,39 @@ Kuvatus ei etsi tiedostoja alakansioista, eli siirrettävien tiedostojen on olta
 
 ---
 ## Asennusohje
-Vaihe 1/3 - Lähdekoodin lataaminen:
+### Vaihe 1/3 - Lähdekoodin lataaminen
+![](src/readme/download.png)
+
 1. tarkista, että valittu välilehti GitHubissa on `Code`
 2. valitse vihreä `Code`-valikko
 3. valitse `Download ZIP`
-![](src/readme/download.png)
 
-Vaihe 2/3 - Lähdekoodipaketin purku:
+
+### Vaihe 2/3 - Lähdekoodipaketin purku:
+
+![](src/readme/unzip.png)
+
 4. avaa tietokoneen Ladatut tiedostot-kansio
 5. avaa `kuvatus-main.zip`-tiedoston valikko hiiren kakkospainikkeella ja valitse `Pura kaikki...`
 6. noudata purkuohjeita, valitse `Näytä lopuksi puretut tiedostot`
    1. tämä on Kuvatuksen asennuskansio
-![](src/readme/unzip.png)
 
 
-Vaihde 3/3 - Käyttöönotto:
+
+### Vaihe 3/3 - Käyttöönotto:
+
+![](src/readme/pikakuvake.png)
+
 7. kansiossa, johon `kuvatus-main.zip` purettiin edellisessä vaiheessa:
 8. suorita pikakuvake-sovellus tuplaklikkaamalla sitä
    1. tämä luo työpöydälle pikakuvakkeen, jonka kautta Kuvatusta voi käyttää
    2. jos Windows Defender varoittaa tuntemattoman sovelluksen suorittamisesta,
-    valitse `Lisätietoja` ja `Suorita joka tapauksessa` 
+    valitse `Lisätietoja` ja `Suorita joka tapauksessa`
+  3. sulje asennuskansio, mene tietokoneen työpöydälle
 9. Kuvatus on valmis käytettäväksi!
    1. Windows Defender voi varoittaa tuntemattoman sovelluksen suorittamisesta, toimi kuten edellä
    2. Jos Kuvatus ei käynnisty, kokeile siirtää Kuvatuksen asennuskansio esimerkiksi Tiedostot-kansioon ja palaa ohjeen kohtaan 8
-   
-![](src/readme/pikakuvake.png)
+  
 
 ---
 
