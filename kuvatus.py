@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import sys
+import webbrowser
 from configparser import ConfigParser
 
 import FreeSimpleGUI as gui
@@ -395,3 +396,6 @@ if __name__ == '__main__':
 
     update_config_file(source, destination, remove, use_months)
     done_dialog()
+
+    # consider adding to settings
+    webbrowser.open(destination)
