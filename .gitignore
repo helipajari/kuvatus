@@ -1,13 +1,15 @@
-kuvatus.spec
+*.html
+*.kra
+*.pkg
+*.pyz
+*.spec
+*.toc
+*.zip
+*.xml
 
 /.idea
 /build/kuvatus
-
-
 /src/img/old
-/src/img/kuvatus logo.ico.kra
-
-
 
 # Default ignored files
 /shelf/
@@ -17,4 +19,3 @@ kuvatus.spec
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-
