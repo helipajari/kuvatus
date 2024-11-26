@@ -108,9 +108,6 @@ Kuvatus ei etsi tiedostoja alakansioista, eli siirrettävien tiedostojen on olta
 ## Käyttöohje 
 1. käynnistä Kuvatus työpöydän pikakuvakkeesta
 2. tarkista lähde- ja kohdekansioiden sijainti, etsi tai muuta niitä tarvittaessa
-   - lähdekansio on oletusarvona tietokoneen `D`-levy, joka läppäreitä käyttäessä on yleensä muistikortti
-   - kohdekansio on oletusarvoisesti käyttäjän oma `Kuvat`-kansio
-     - katso kohta [Asetukset](#Asetukset) näiden muokkaamiseksi
    2. **HUOM** kansiota etsiessä tai muutettaessa on valittava `Valitse kansio`, muuten muutos ei tule voimaan.
 3. valitse, poistetaanko kuvat lähdekansiosta (tekstiä `Poistetaanko kuvat lähdekansiosta?` voi klikata hiirellä valinnan muuttamiseksi)
 4. valitse, käytetäänkö kansioiden nimissä myös kuukausien nimiä numeroiden lisäksi (tekstiä `Käytä kuukausien nimiä kansiossa?` voi klikata hiirellä valinnan muuttamiseksi)
@@ -132,7 +129,7 @@ hiirellä. Hiirtä tarvitaan vain, jos kansiosijainteja pitää muuttaa.
 Kuvatus tallentaa valitut tiedostopolut ja käyttöasetukset automaattisesti asetustiedostoon `config.ini`, kun tiedostoja siirretään.
 
 Jos `config.ini`-tiedostoa ei löydy, Kuvatus luo sellaisen oletusasetuksilla. 
-Oletusasetuksina kuvien lähdekansio on D-levy, kohde käyttäjän Kuvat-kansio, 
+Oletusasetuksina kuvien lähdekansio on D-levy, 
 kuvat poistetaan lähdekansiosta siirron jälkeen ja kansioissa käytetään kuukausien nimiä.
 
 
